@@ -1,0 +1,57 @@
+<?php
+header('Location: https://www.gnomicsd.com/editorial/ok/');
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Interpretación de resultado IPSS1 1</title>
+
+<META NAME="Title" CONTENT="Interpretación de resultado MRS 1">
+<META content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
+<META NAME="Subject" CONTENT="curso">
+<META NAME="Description" CONTENT="gnomicsd">
+<META NAME="Generator" CONTENT="html">
+<META NAME="Language" CONTENT="Spanish">
+<META NAME="Revisit" CONTENT="3 day">
+<META NAME="Distribution" CONTENT="Global">
+<META NAME="ROBOTS" CONTENT="NONE">
+
+<?php
+$email = $_POST['email']; 
+$fecha = date("d-m-Y H:i"); 
+$pais = $_POST['pais']; 
+$provincia = $_POST['provincia']; 
+$edad = $_POST['edad']; 
+$aceptoavisolegal = $_POST['aceptoavisolegal'];
+if(true === array_key_exists('submit', $_POST))
+{
+    mysql_connect("localhost","sanatus_admin2","ascensionqqq") or die(mysql_error()); 
+    mysql_select_db("sanatus_pedidos") or die(mysql_error());
+        $rResult = mysql_query(
+        sprintf(
+            "INSERT INTO `009` (email, fecha, aceptoavisolegal, estado, authkey)VALUES('%s', '$fecha', '$aceptoavisolegal', 'pendiente', '%s')",
+        $_POST['email'],
+        sha1($_POST['email']) 
+    )
+);
+$rResult = mysql_query(
+        sprintf(
+            "INSERT INTO `014` (email, fecha, aceptoavisolegal, estado, authkey)VALUES('%s', '$fecha', '$aceptoavisolegal', 'pendiente', '%s')",
+        $_POST['email'],
+        sha1($_POST['email']) 
+    )
+);
+    mail(
+        $_POST['email'],
+        'Confirmar solicitud',
+        sprintf(
+            'Confirmar solicitud de resultado:<br><br><a href="https://www.ayrmed.com/ipss1c.php?key=%s ">Haga Click aquí para leer el resultado de su gnomicsd </a><br><br>Si recibió este mensaje por error, simplemente ignórelo.<br><br>Su solicitud incluye una suscripción gratis a nuestra Newsletter que puede cancelarse en cualquier momento.<br><br>Si usted tiene alguna pregunta con respecto a este correo electrónico, contacte con nosotros en info@gnomicsd.com.<br><br>Gracias y saludos cordiales,<br><br>Departamento de Administración',
+            sha1($_POST['email'])
+        ),
+        'Content-type: text/html; charset=iso-8859-1' . "\r\n" .
+    'MIME-Version: 1.0' . "\r\n" . 'From: info <info@gnomicsd.com>' . "\r\n" .
+    'Reply-To: <info@gnomicsd.com>' . "\r\n" .
+    'X-Mailer: PHP/'
+    );
+    echo 'Gracias, por favor revise su email para confirmar la suscripción.';
+    exit;
+}
+?>
